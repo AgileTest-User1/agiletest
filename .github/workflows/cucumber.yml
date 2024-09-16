@@ -1,77 +1,54 @@
-# name: Playwright Tests
-# on:
-#   push :
-#    branches:
-#    - main
-  
-# jobs:
-#   e2e-tests:
-#     runs-on: macos-latest
-#     if: github.event.deployment_status.state == 'success'
-#     steps:
-    # - uses: actions/checkout@v2
-    # - uses: actions/setup-node@v1
-    #   with:
-#         node-version: 18
-    # - name: Install dependencies
-    #   run: npm ci
-    # - name: Install Playwright
-    #   run: npx playwright install --with-deps
-    # - name: Run Playwright tests
-    #   run: npx playwright test
-#       env:
-#         CLIENT_SECRET: ${{ CLIENT_SECRET }}
-#         CLIENT_ID: ${{ CLIENT_ID }}
-#         run: 'curl -H "Content-Type: text/xml" -X POST -H "Authorization: Bearer $token"  --data @"./test-results/junit-report.xml" https://xray.cloud.getxray.app/api/v2/import/execution/junit?projectKey=HEHE'
-
-
-
-
-
-
-name: CI (Jira cloud example with GH action, report results to Test Execution - demo)
+name: Trigger test
+run-name: ${{ github.actor }} is testing out GitHub Actions on develop branch 🚀
 on:
+  push:
+    branches:
+      - main
+
   workflow_dispatch:
     inputs:
-      test_execution_key:
-        description: 'Test Execution issue key'
+      PROJECT_KEY:
+        description: The key of project
+        type: string
+        required: true
+      TEST_EXECUTION_KEY:
+        description: The key of test execution
+        type: string
         required: false
-        default: ''
+
+env:
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
-         
+    strategy:
+      matrix:
+        ruby-version: [ '2.7', '3.0' ]
     steps:
-     - uses: actions/checkout@v2
-     - uses: actions/setup-node@v1
+     - name: Checkout code
+       uses: actions/checkout@v3
+         # Set up Ruby environment
+     - name: Set up Ruby ${{ matrix.ruby-version }}
+       uses: ruby/setup-ruby@v1
        with:
-          node-version: 18
-  
-    # - uses: actions/checkout@v1
-    # - name: Set up Java
-    #   uses: actions/setup-java@v1
-    #   with:
-    #     java-version: '1.8' 
-    # - name: Cache Maven packages
-    #   uses: actions/cache@v2
-    #   with:
-    #     path: ~/.m2
-    #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-    #     restore-keys: ${{ runner.os }}-m2
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+
+      # Install dependencies
      - name: Install dependencies
-       run: npm ci
-     - name: Install Playwright
-       run: npx playwright install --with-deps
-     - name: Run Playwright tests
-       run: npx playwright test
-     - name: Submit results to Xray
-       uses: mikepenz/xray-action@v2.4.5
-       with:
-        username: ${{secrets.client_id}}
-        password: ${{ secrets.client_secret }}
-        xrayCloud: true
-        testFormat: "junit"
-        testPaths: "**/test-results/*.xml"
-        projectKey: "COM"
-        testExecutionKey: ${{ github.event.inputs.test_execution_key }}
+       run: |
+          gem install bundler
+          bundle install
+
+      # Run Cucumber tests
+     - name: Run Cucumber
+       run: |
+          bundle exec cucumber
+     - name : import result
+       run: export token=$(curl 'https://agile-test-stg-dot-devsamurai-dev.ue.r.appspot.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
+     - run: echo $token
+     - run: curl -X POST -H "Content-Type:application/json" -H "Authorization:JWT $token" --data @cucumber_report.json "https://api.dev.agiletest.app/ds/test-executions/cucumber?projectKey=AUT"
+    
+
