@@ -1,0 +1,69 @@
+[
+  {
+    "description": "  Everybody wants to know when it's Friday",
+    "elements": [
+      {
+        "description": "",
+        "id": "is-it-friday-yet?;sunday-isn't-friday",
+        "keyword": "Scenario",
+        "line": 5,
+        "name": "Sunday isn't Friday",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 6,
+            "name": "today is Sunday",
+            "match": {
+              "location": "features/step_definitions/stepdefs.js:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 475667
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I ask whether it's Friday yet",
+            "match": {
+              "location": "features/step_definitions/stepdefs.js:12"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 50665
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 8,
+            "name": "I should be told \"Nope\"",
+            "match": {
+              "location": "features/step_definitions/stepdefs.js:16"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 971125,
+              "error_message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\u001b[32m+ actual\u001b[39m \u001b[31m- expected\u001b[39m\n\n\u001b[32m+\u001b[39m undefined\n\u001b[31m-\u001b[39m 'Nope'\n    at World.<anonymous> (/Users/thuydung/Desktop/github/agiletest/features/step_definitions/stepdefs.js:17:10)"
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@AUT-742",
+            "line": 4
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "is-it-friday-yet?",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Is it Friday yet?",
+    "tags": [],
+    "uri": "features/is_it_friday_yet.feature"
+  }
+]

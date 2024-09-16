@@ -1,0 +1,15 @@
+{
+  "name": "agiletest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cucumber.config.js",
+  "scripts": {
+    "test": "cucumber-js features -f json:report/cucumber_report.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.0.0"
+  }
+}
