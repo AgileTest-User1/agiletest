@@ -38,14 +38,15 @@ jobs:
 
       # Install dependencies
      - name: Install dependencies
-       run: |
-          gem install bundler
-          bundle install
+       run:  apt-get update -qq
+     - run :  apt-get install unzip
+     - run :  gem install cucumber
+     - run :  gem install rspec-expectations
 
       # Run Cucumber tests
      - name: Run Cucumber
-       run: |
-          bundle exec cucumber
+       run: cucumber --format json --out report/cucumber_report.json 
+     - run: ls
      - name : import result
        run: export token=$(curl 'https://agile-test-stg-dot-devsamurai-dev.ue.r.appspot.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
      - run: echo $token
