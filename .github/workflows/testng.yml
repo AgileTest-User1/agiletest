@@ -48,5 +48,5 @@ jobs:
         run: |
           export token=$(curl 'https://agile-test-stg-dot-devsamurai-dev.ue.r.appspot.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
           echo $token
-          curl -X POST -H "Content-Type:application/xml" -H "Authorization:JWT $token" --data-binary "@target/surefire-reports/testng-results.xml" "https://api.dev.agiletest.app/ds/test-executions/testng?projectKey=AUT&testExecutionKey=${TEST_EXECUTION_KEY}"
+          curl -X POST -H "Content-Type:application/xml" -H "Authorization:JWT $token" --data-binary "@testng-results.xml" "https://api.dev.agiletest.app/ds/test-executions/testng?projectKey=AUT&testExecutionKey=${TEST_EXECUTION_KEY}"
           echo "done"
