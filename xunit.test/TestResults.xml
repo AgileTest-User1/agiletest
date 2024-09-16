@@ -1,0 +1,13 @@
+<assemblies timestamp="09/11/2024 08:57:18">
+  <assembly name="/Users/thuydung/Desktop/gitlab/agiletest2/xunit.test/bin/Debug/net8.0/xunit.test.dll" run-date="2024-09-11" run-time="08:57:18" total="2" passed="2" failed="0" skipped="0" time="1.245" errors="0">
+    <errors />
+    <collection total="2" passed="2" failed="0" skipped="0" name="Test collection for MathOperationsTests.CalculatorTests" time="0.006">
+      <test name="MathOperationsTests.CalculatorTests.Add_ShouldReturnSum" type="MathOperationsTests.CalculatorTests" method="Add_ShouldReturnSum" time="0.0053581" result="Pass">
+        <traits />
+      </test>
+      <test name="MathOperationsTests.CalculatorTests.Subtract_ShouldReturnDifference" type="MathOperationsTests.CalculatorTests" method="Subtract_ShouldReturnDifference" time="0.0007401" result="Pass">
+        <traits />
+      </test>
+    </collection>
+  </assembly>
+</assemblies>

@@ -1,0 +1,46 @@
+name: NUnit/xUnit Test and Upload to AgileTest
+
+on:
+  push:
+    branches:
+      - xunit
+  pull_request:
+    branches:
+      - xunit
+
+jobs:
+  nunit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up .NET Core SDK
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.x'  # Adjust based on your project's .NET SDK version
+
+      # Run NUnit or xUnit tests and generate test results
+      - name: Run NUnit/xUnit tests
+        env:
+          NODE_OPTIONS: "--max-old-space-size=3072"  # Memory optimization
+        run: |
+          cd xunit.test
+          dotnet restore
+          dotnet add package XunitXml.TestLogger --version 3.1.20
+          dotnet test --logger:"xunit;LogFilePath=TestResults.xml"
+          ls
+
+      # Authenticate and upload the test results to AgileTest
+      - name: Upload NUnit/xUnit Results to AgileTest
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        run: |
+          export token=$(curl 'https://agile-test-stg-dot-devsamurai-dev.ue.r.appspot.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
+          echo $token
+          curl -X POST -H "Content-Type:application/xml" -H "Authorization:JWT $token" --data "@xunit.test/TestResults.xml" "https://api.dev.agiletest.app/ds/test-executions/xunit?projectKey=AUT"
+          echo "done"
