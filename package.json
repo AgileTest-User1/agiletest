@@ -1,19 +1,16 @@
 {
-  "dependencies": {
-    "axios": "^1.7.3"
-  },
+  "name": "automationtest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "cucumber-test": "cucumber-js --config cucumber.config.js || true",
-    "junit-test": "jest --ci || true",
-    "behave-test": "behave --no-capture || true",
-    "robot-test": "robot -A robot.config || true",
-    "nunit-test": "cd nunit.test && dotnet restore && dotnet add package NunitXml.TestLogger --version 4.0.254 && dotnet test --logger \"nunit;LogFilePath=../reports/nunit-report.xml\" || true",
-    "xunit-test": "cd xunit.test && dotnet restore && dotnet add package XunitXml.TestLogger --version 3.1.20 && dotnet test --logger \"xunit;LogFilePath=../reports/xunit-report.xml\" || true",
-    "testng-test": "cd testng.test && mvn clean install && mvn compile && mvn test || true"
+    "test": "npx playwright test --project=chromium"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "jest": "^29.7.0",
-    "jest-junit": "^16.0.0",
-    "@cucumber/cucumber": "^10.8.0"
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.5"
   }
 }
