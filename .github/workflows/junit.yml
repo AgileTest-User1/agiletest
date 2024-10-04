@@ -30,7 +30,7 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
-          export token=$(curl 'https://agile-test-stg-dot-devsamurai-dev.ue.r.appspot.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
+          export token=$(curl 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
           echo $token
-          curl -X POST -H "Content-Type:application/xml" -H "Authorization:JWT $token" --data @"./playwright-report/results.xml" "https://api.dev.agiletest.app/ds/test-executions/junit?projectKey=AUT"
+          curl -X POST -H "Content-Type:application/xml" -H "Authorization:JWT $token" --data @"./playwright-report/results.xml" "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=AUT&testExecutionKey=${testExecutionKey}"
           echo "done"
