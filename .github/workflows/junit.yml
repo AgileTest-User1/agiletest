@@ -34,3 +34,14 @@ jobs:
           echo $token
           curl -X POST -H "Content-Type:application/xml" -H "Authorization:JWT $token" --data @"./playwright-report/results.xml" "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=AUT&testExecutionKey=${testExecutionKey}"
           echo "done"
+
+          
+            - if [ "$BITBUCKET_EXIT_CODE" -eq 0 ]; then
+              RESULT="SUCCESS";
+              else
+              RESULT="FAILED";
+              fi
+            - |
+              export token=$(curl -H "Content-Type: application/json" -X POST --data '{ "clientId": "'"$CLIENT_ID"'", "clientSecret": "'"$CLIENT_SECRET"'" }' https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate | tr -d '"')
+            - |
+              curl -H "Content-Type: application/json" -H "Authorization: JWT $token" --data '{ "buildNumber": "'"$BITBUCKET_BUILD_NUMBER"'", "tool": "'"bitbucket"'", "repoSlug": "'"$BITBUCKET_REPO_SLUG"'", "workspace": "'"$BITBUCKET_WORKSPACE"'", "result": "'"$RESULT"'"  }' "https://dev.api.agiletest.app/ds/test-executions/$TEST_EXECUTION_KEY/pipeline/history?projectKey=$PROJECT_KEY"
