@@ -25,23 +25,56 @@ jobs:
       - name: Run tests
         run: npm run test
 
-      - name: update result
+      - name: Authenticate and upload test results
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          TEST_EXECUTION_KEY: ${{ secrets.TEST_EXECUTION_KEY }}
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
         run: |
-          export token=$(curl 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
-          echo $token
-          curl -X POST -H "Content-Type:application/xml" -H "Authorization:JWT $token" --data @"./playwright-report/results.xml" "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=AUT&testExecutionKey=${testExecutionKey}"
-          echo "done"
+          # Authenticate and get the token
+          export token=$(curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
+            -H 'Content-Type: application/json' \
+            --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
 
+          echo "Authentication successful, token: $token"
+
+          # Upload the test results
+          curl -X POST \
+            -H "Content-Type: application/xml" \
+            -H "Authorization: JWT $token" \
+            --data @"./playwright-report/results.xml" \
+            "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=$PROJECT_KEY&testExecutionKey=$TEST_EXECUTION_KEY"
           
-            - if [ "$BITBUCKET_EXIT_CODE" -eq 0 ]; then
-              RESULT="SUCCESS";
-              else
-              RESULT="FAILED";
-              fi
-            - |
-              export token=$(curl -H "Content-Type: application/json" -X POST --data '{ "clientId": "'"$CLIENT_ID"'", "clientSecret": "'"$CLIENT_SECRET"'" }' https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate | tr -d '"')
-            - |
-              curl -H "Content-Type: application/json" -H "Authorization: JWT $token" --data '{ "buildNumber": "'"$BITBUCKET_BUILD_NUMBER"'", "tool": "'"bitbucket"'", "repoSlug": "'"$BITBUCKET_REPO_SLUG"'", "workspace": "'"$BITBUCKET_WORKSPACE"'", "result": "'"$RESULT"'"  }' "https://dev.api.agiletest.app/ds/test-executions/$TEST_EXECUTION_KEY/pipeline/history?projectKey=$PROJECT_KEY"
+          echo "Test results uploaded successfully"
+
+      - name: Determine build result and update history
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          BITBUCKET_BUILD_NUMBER: ${{ github.run_number }}
+          BITBUCKET_REPO_SLUG: ${{ github.repository }}
+          BITBUCKET_WORKSPACE: ${{ github.actor }}
+          TEST_EXECUTION_KEY: ${{ secrets.TEST_EXECUTION_KEY }}
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+        run: |
+          # Check if the tests passed or failed
+          if [ "${{ job.status }}" == "success" ]; then
+            RESULT="SUCCESS";
+          else
+            RESULT="FAILED";
+          fi
+
+          # Re-authenticate to get a fresh token
+          export token=$(curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
+            -H 'Content-Type: application/json' \
+            --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
+
+          # Update the pipeline history
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: JWT $token" \
+            --data '{ "buildNumber": "'"$BITBUCKET_BUILD_NUMBER"'", "tool": "bitbucket", "repoSlug": "'"$BITBUCKET_REPO_SLUG"'", "workspace": "'"$BITBUCKET_WORKSPACE"'", "result": "'"$RESULT"'" }' \
+            "https://dev.api.agiletest.app/ds/test-executions/$TEST_EXECUTION_KEY/pipeline/history?projectKey=$PROJECT_KEY"
+
+          echo "Pipeline history updated successfully"
