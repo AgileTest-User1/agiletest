@@ -47,7 +47,7 @@ jobs:
             -H 'Content-Type: application/json' \
             --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
 
-          echo "Authentication successful, token: $token"
+          echo $token
 
           # Upload the test results
           curl -X POST \
