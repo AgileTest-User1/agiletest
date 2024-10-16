@@ -7,6 +7,16 @@ on:
   pull_request:
     branches:
       - junit
+  workflow_dispatch:
+    inputs:
+      PROJECT_KEY:
+        description: The key of project
+        type: string
+        required: true # require project key
+      TEST_EXECUTION_KEY:
+        description: The key of test execution
+        type: string
+        required: false # optional test execution key
 
 jobs:
   test:
