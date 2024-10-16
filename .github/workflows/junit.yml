@@ -58,33 +58,25 @@ jobs:
           
           echo "Test results uploaded successfully"
 
-      - name: Determine build result and update history
-        env:
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          BITBUCKET_BUILD_NUMBER: ${{ github.run_number }}
-          BITBUCKET_REPO_SLUG: ${{ github.repository }}
-          BITBUCKET_WORKSPACE: ${{ github.actor }}
-          TEST_EXECUTION_KEY: ${{ secrets.TEST_EXECUTION_KEY }}
-          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+      - name: Set result based on exit code
         run: |
-          # Check if the tests passed or failed
-          if [ "${{ job.status }}" == "success" ]; then
-            RESULT="SUCCESS";
+          if [ "$GITHUB_RUN_ATTEMPT" -eq 0 ]; then
+            RESULT="success";
           else
-            RESULT="FAILED";
+            RESULT="failed";
           fi
 
-          # Re-authenticate to get a fresh token
-          export token=$(curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
-            -H 'Content-Type: application/json' \
-            --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
+      - name: Authenticate and get token
+        run: |
+          export token=$(curl -H "Content-Type: application/json" -X POST --data '{ "clientId": "'"$CLIENT_ID"'", "clientSecret": "'"$CLIENT_SECRET"'" }' https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate | tr -d '"')
+          echo $token
 
-          # Update the pipeline history
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -H "Authorization: JWT $token" \
-            --data '{ "buildNumber": "'"$BITBUCKET_BUILD_NUMBER"'", "tool": "bitbucket", "repoSlug": "'"$BITBUCKET_REPO_SLUG"'", "workspace": "'"$BITBUCKET_WORKSPACE"'", "result": "'"$RESULT"'" }' \
-            "https://dev.api.agiletest.app/ds/test-executions/$TEST_EXECUTION_KEY/pipeline/history?projectKey=$PROJECT_KEY"
+      - name: Send test execution result
+        run: |
+          curl -H "Content-Type: application/json" -H "Authorization: JWT $token" --data '{ "buildNumber": '"$GITHUB_RUN_NUMBER"', "tool": "'"github"'", "repoSlug": "'"$GITHUB_REPOSITORY"'", "workspace": "'"$GITHUB_WORKSPACE"'", "result": "'"$RESULT"'"  }' "https://dev.agiletest.atlas.devsamurai.com/ds/test-executions/$TEST_EXECUTION_KEY/pipeline/history?projectKey=$PROJECT_KEY"
 
-          echo "Pipeline history updated successfully"
+      - name: Echo values for debugging
+        run: |
+          echo $GITHUB_RUN_NUMBER
+          echo $GITHUB_REPOSITORY
+          echo $GITHUB_WORKSPACE
