@@ -54,7 +54,7 @@ jobs:
             -H "Content-Type: application/xml" \
             -H "Authorization: JWT $token" \
             --data @"./playwright-report/results.xml" \
-                      "https://dev.api.agiletest.app/ds/test-executions/robot?projectKey=$PROJECT_KEY&testExecutionKey=$TEST_EXECUTION_KEY"
+                      "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=$PROJECT_KEY&testExecutionKey=$TEST_EXECUTION_KEY"
 
 
       - name: Set result based on exit code
