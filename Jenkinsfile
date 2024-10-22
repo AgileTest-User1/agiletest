@@ -6,14 +6,25 @@ pipeline {
         string(name: 'TEST_EXECUTION_KEY', description: 'The key of test execution', defaultValue: '${TEST_EXECUTION_KEY}')
         string(name: 'CLIENT_ID', description: 'The key of project', defaultValue: 'Mmar0YgnY3LFQD7I3AqlwEQ95xJ1i0Le0GVy49f1wcc=')
         string(name: 'CLIENT_SECRET', description: 'The key of test execution', defaultValue: 'dc6c48806069f4f8c2442076bdc806cc81170aa9aefa91a51eff979e5515b5d7')
+        string(name: 'TRIGGER_PARAM', defaultValue: '11f60f1a919e539614c047910b2cbd99bf', description: 'Parameter for remote trigger')
+
     }
 
     stages {
         stage('Checkout code') {
             steps {
                 checkout scm
+            
             }
         }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo "Build triggered with parameter: ${params.TRIGGER_PARAM}"
+            }
+        }
+    }
 
         stage('Run tests in Playwright Docker container') {
             steps {
