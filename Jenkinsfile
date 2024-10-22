@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:16' // Use a Node.js Docker image
+            args '-v /Users/thuydung/Desktop/gitlab/agiletest2:/app' // Mount your project directory
+        }
+    }
 
     parameters {
         string(name: 'PROJECT_KEY', description: 'The key of the project', defaultValue: 'AUT')
@@ -14,7 +19,6 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Replace with your Git repository URL
                 checkout scm
             }
         }
@@ -23,10 +27,9 @@ pipeline {
             steps {
                 script {
                     echo "Running tests..."
-                    // Navigate to the directory containing your tests
-                    dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
-                        // Run npm tests and allow failure
-                        sh 'npm test || true'
+                    dir('/app') { // Change to the mounted directory
+                        sh 'npm ci' // Install dependencies
+                        sh 'npm test || true' // Run tests
                     }
                     echo "Tests completed."
                 }
@@ -36,18 +39,15 @@ pipeline {
         stage('Authenticate and Upload Results') {
             steps {
                 script {
-                    // Authenticate and get the token
                     def response = sh(script: """
                         curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
                         -H 'Content-Type: application/json' \
                         --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
                     """, returnStdout: true).trim()
 
-                    // Extract token from response
-                    def token = response.token // Modify this if response parsing needs adjustment
+                    def token = response.token
                     echo "Token: ${token}"
 
-                    // Upload results
                     def uploadResponse = sh(script: """
                         curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
