@@ -43,12 +43,7 @@ pipeline {
                         --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
                     """, returnStdout: true).trim()
                 echo "Authentication Response: ${response}" 
-
-
-                    // def token = new groovy.json.JsonSlurper().parseText(response).token
-                    // echo "Token: ${token}"
-
-                    // Upload test results
+                
                     def uploadResponse = sh(script: """
                         curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
