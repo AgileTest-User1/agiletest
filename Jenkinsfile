@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        any {
-            image 'node:16' // Use the Node.js Docker image
-        }
-    }
+    agent any // Use any available agent
 
     parameters {
         string(name: 'PROJECT_KEY', description: 'The key of the project', defaultValue: 'AUT')
@@ -23,6 +19,12 @@ pipeline {
         }
 
         stage('Run Tests') {
+            agent {
+                docker {
+                    image 'node:16' // Use the Node.js Docker image
+                    args '-v /Users/thuydung/Desktop/gitlab/agiletest2:/app' // Mount your project directory
+                }
+            }
             steps {
                 script {
                     echo "Running tests..."
@@ -38,6 +40,7 @@ pipeline {
         stage('Authenticate and Upload Results') {
             steps {
                 script {
+                    // Authenticate and get the token
                     def response = sh(script: """
                         curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
                         -H 'Content-Type: application/json' \
@@ -47,6 +50,7 @@ pipeline {
                     def token = new groovy.json.JsonSlurper().parseText(response).token
                     echo "Token: ${token}"
 
+                    // Upload test results
                     def uploadResponse = sh(script: """
                         curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
