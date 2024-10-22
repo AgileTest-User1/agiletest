@@ -1,6 +1,9 @@
 pipeline {
-    agent {
-        docker { image 'mcr.microsoft.com/playwright:v1.48.1-noble' }
+     agent {
+        docker { 
+            image 'mcr.microsoft.com/playwright:v1.48.1-noble' 
+            args '-u root:root' // Optional: Run as root if needed
+        }
     }
 
     parameters {
