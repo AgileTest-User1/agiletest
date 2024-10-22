@@ -76,10 +76,8 @@ jobs:
 
       - name: Send test execution result
         run: |
-          curl -H "Content-Type: application/json" -H "Authorization: JWT $token" --data '{ "buildNumber": '"$GITHUB_RUN_NUMBER"', "tool": "'"github"'", "repoSlug": "'"$GITHUB_REPOSITORY"'", "workspace": "'"$GITHUB_WORKSPACE"'", "result": "'"$RESULT"'"  }' "https://dev.agiletest.atlas.devsamurai.com/ds/test-executions/$TEST_EXECUTION_KEY/pipeline/history?projectKey=$PROJECT_KEY"
+          curl -H "Content-Type: application/json" -H "Authorization: JWT $token" --data '{ "jobURL": '"$CI_JOB_URL"', "tool": "'"github"'", "result": "'"$RESULT"'"  }' "https://dev.agiletest.atlas.devsamurai.com/ds/test-executions/$TEST_EXECUTION_KEY/pipeline/history?projectKey=$PROJECT_KEY"
 
       - name: Echo values for debugging
         run: |
-          echo $GITHUB_RUN_NUMBER
-          echo $GITHUB_REPOSITORY
-          echo $GITHUB_WORKSPACE
+          - echo "job URL: $CI_JOB_URL"
