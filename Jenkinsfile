@@ -18,24 +18,18 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            agent {
-                docker {
-                    image 'node:16' // Use the Node.js Docker image
-                    args '-v /Users/thuydung/Desktop/gitlab/agiletest2:/app' // Mount your project directory
-                }
+stage('Run Tests') {
+    steps {
+        script {
+            echo "Running tests..."
+            dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
+                sh 'npm ci' // Install dependencies
+                sh 'npm test || true' // Run tests
             }
-            steps {
-                script {
-                    echo "Running tests..."
-                    dir('/app') { // Change to the mounted directory
-                        sh 'npm ci' // Install dependencies
-                        sh 'npm test || true' // Run tests
-                    }
-                    echo "Tests completed."
-                }
-            }
+            echo "Tests completed."
         }
+    }
+}
 
         stage('Authenticate and Upload Results') {
             steps {
