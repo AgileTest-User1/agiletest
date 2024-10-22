@@ -43,12 +43,12 @@ pipeline {
                         --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
                     """, returnStdout: true).trim()
                 echo "Authentication Response: ${response}" 
-                
+
                     def uploadResponse = sh(script: """
                         curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
                         --data @"./playwright-report/results.xml" \
-                        "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${params.PROJECT_KEY}&testExecutionKey=${params.TEST_EXECUTION_KEY}"
+                        "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=AUT&testExecutionKey=AUT-3879"
                     """, returnStdout: true).trim()
 
                     echo "API Response: ${uploadResponse}"
