@@ -28,7 +28,9 @@ pipeline {
                         --data-raw '{}'
                     '''
                 }
-            }}
+            }
+            }
+  }
 
     stages {
         stage('Checkout code') {
