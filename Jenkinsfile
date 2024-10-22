@@ -1,5 +1,16 @@
 pipeline {
-    agent any
+    agent
+    { docker { image 'mcr.microsoft.com/playwright:v1.48.1-noble' } }
+   
+   stages {
+      stage('e2e-tests') {
+         steps {
+            sh 'npm ci'
+            sh 'npx playwright test'
+         }
+      }
+   }
+
 
     parameters {
         string(name: 'PROJECT_KEY', description: 'The key of project', defaultValue: 'AUT')
@@ -18,18 +29,16 @@ pipeline {
             }
         }
 
-        stage('Run tests in Playwright Docker container') {
-            steps {
-                script {
-                    // Run Playwright tests inside the Docker container
-                    sh '''
-                        docker run --rm -v "$PWD:/app" -w /app mcr.microsoft.com/playwright:v1.42.1-focal /bin/bash -c "
-                            npm ci && npm run test
-                        "
-                    '''
-                }
-            }
-        }
+
+          stages {
+      stage('e2e-tests') {
+         steps {
+            sh 'npm ci'
+            sh 'npx playwright test'
+         }
+      }
+   }
+
 
         stage('Authenticate and upload test results') {
             steps {
