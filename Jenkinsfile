@@ -42,9 +42,10 @@ pipeline {
                         -H 'Content-Type: application/json' \
                         --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
                     """, returnStdout: true).trim()
+                                    echo "API Response: ${uploadResponse}"
 
-                    def token = new groovy.json.JsonSlurper().parseText(response).token
-                    echo "Token: ${token}"
+                    // def token = new groovy.json.JsonSlurper().parseText(response).token
+                    // echo "Token: ${token}"
 
                     // Upload test results
                     def uploadResponse = sh(script: """
