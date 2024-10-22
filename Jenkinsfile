@@ -42,13 +42,18 @@ pipeline {
                         -H 'Content-Type: application/json' \
                         --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
                     """, returnStdout: true).trim()
-                echo "Authentication Response: ${response}" 
+                    echo "Authentication Response: ${response}"
 
+                    // Parse the token from the response
+                    def jsonResponse = readJSON(text: response) // Make sure the response is JSON
+                    def token = jsonResponse.token // Adjust based on the actual structure of the response
+
+                    // Upload results
                     def uploadResponse = sh(script: """
                         curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
                         --data @"./playwright-report/results.xml" \
-                        "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=AUT&testExecutionKey=AUT-3879"
+                        "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${params.PROJECT_KEY}&testExecutionKey=${params.TEST_EXECUTION_KEY}"
                     """, returnStdout: true).trim()
 
                     echo "API Response: ${uploadResponse}"
