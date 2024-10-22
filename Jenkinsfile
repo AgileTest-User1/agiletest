@@ -1,8 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'node:16' // Use a Node.js Docker image
-            args '-v /Users/thuydung/Desktop/gitlab/agiletest2:/app' // Mount your project directory
+            image 'node:16' // Use the Node.js Docker image
         }
     }
 
@@ -45,7 +44,7 @@ pipeline {
                         --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
                     """, returnStdout: true).trim()
 
-                    def token = response.token
+                    def token = new groovy.json.JsonSlurper().parseText(response).token
                     echo "Token: ${token}"
 
                     def uploadResponse = sh(script: """
