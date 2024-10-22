@@ -2,25 +2,21 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'PROJECT_KEY', description: 'The key of project', defaultValue: '${PROJECT_KEY}')
-        string(name: 'TEST_EXECUTION_KEY', description: 'The key of test execution', defaultValue: '${TEST_EXECUTION_KEY}')
-        string(name: 'CLIENT_ID', description: 'The key of project', defaultValue: 'Mmar0YgnY3LFQD7I3AqlwEQ95xJ1i0Le0GVy49f1wcc=')
-        string(name: 'CLIENT_SECRET', description: 'The key of test execution', defaultValue: 'dc6c48806069f4f8c2442076bdc806cc81170aa9aefa91a51eff979e5515b5d7')
-
+        string(name: 'PROJECT_KEY', description: 'The key of project', defaultValue: 'AUT')
+        string(name: 'TEST_EXECUTION_KEY', description: 'The key of test execution', defaultValue: 'AUT-3879')
     }
 
-
- 
+    environment {
+        CLIENT_ID = credentials('CLIENT_ID') // Ensure Jenkins credentials are configured
+        CLIENT_SECRET = credentials('CLIENT_SECRET') // Ensure Jenkins credentials are configured
+    }
 
     stages {
         stage('Checkout code') {
             steps {
                 checkout scm
-            
             }
         }
-
-
 
         stage('Run tests in Playwright Docker container') {
             steps {
@@ -38,12 +34,15 @@ pipeline {
         stage('Authenticate and upload test results') {
             steps {
                 script {
-                    def token = sh(script: """
+                    def response = sh(script: """
                         curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
                         -H 'Content-Type: application/json' \
                         --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
                     """, returnStdout: true).trim()
-
+                    
+                    // Assuming the response contains a JSON with a token field
+                    def token = new groovy.json.JsonSlurper().parseText(response).token
+                    
                     sh """
                         curl -X POST \
                         -H "Content-Type: application/xml" \
@@ -58,7 +57,8 @@ pipeline {
         stage('Set result based on exit code') {
             steps {
                 script {
-                    if (currentBuild.result == null) {
+                    // Automatically setting result based on test execution
+                    if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
                         currentBuild.result = 'SUCCESS'
                     } else {
                         currentBuild.result = 'FAILURE'
@@ -70,20 +70,20 @@ pipeline {
         stage('Send test execution result') {
             steps {
                 script {
-                    def token = sh(script: """
+                    def response = sh(script: """
                         curl -H "Content-Type: application/json" -X POST --data '{ "clientId": "${env.CLIENT_ID}", "clientSecret": "${env.CLIENT_SECRET}" }' https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate
                     """, returnStdout: true).trim()
 
+                    def token = new groovy.json.JsonSlurper().parseText(response).token
+
                     sh """
-                        curl -H "Content-Type: application/json" -H "Authorization: JWT ${token}" --data '{ "jobURL": "${env.BUILD_URL}", "tool": "jenkins", "result": "${currentBuild.result}" }' "https://dev.agiletest.atlas.devsamurai.com/ds/test-executions/${params.TEST_EXECUTION_KEY}/pipeline/history?projectKey=${params.PROJECT_KEY}"
+                        curl -H "Content-Type: application/json" \
+                        -H "Authorization: JWT ${token}" \
+                        --data '{ "jobURL": "${env.BUILD_URL}", "tool": "jenkins", "result": "${currentBuild.result}" }' \
+                        "https://dev.agiletest.atlas.devsamurai.com/ds/test-executions/${params.TEST_EXECUTION_KEY}/pipeline/history?projectKey=${params.PROJECT_KEY}"
                     """
                 }
             }
         }
-    }
-
-    environment {
-        CLIENT_ID = credentials('CLIENT_ID') // Ensure Jenkins credentials are configured
-        CLIENT_SECRET = credentials('CLIENT_SECRET') // Ensure Jenkins credentials are configured
     }
 }
