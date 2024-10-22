@@ -28,8 +28,6 @@ pipeline {
                         sh 'npm ci' // Install dependencies
                         sh 'npm test || true' // Run tests
                         sh 'ls' // Run tests
-                     dir ('playwright-report')
-                          sh 'ls' // Run tests
                     }
                     echo "Tests completed."
                 }
