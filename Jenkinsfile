@@ -34,30 +34,24 @@ pipeline {
             }
         }
 
-        stage('Authenticate and Upload Results') {
+ stage('API Call') {
             steps {
                 script {
-                    // Authenticate and get the token
+                    def token = sh(script: '''
+                        curl 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}' | tr -d '"'
+                    ''', returnStdout: true).trim()
+                    echo "API Token: ${token}"
+
+                    echo "Project key: $PROJECT_KEY"
+                    echo "Test execution key: $TEST_EXECUTION_KEY"
+
                     def response = sh(script: """
-                        curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
-                        -H 'Content-Type: application/json' \
-                        --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
-                    """, returnStdout: true).trim()
-                    echo "Authentication Response: ${response}"
-
-                    // Parse the token from the response
-                    def jsonResponse = readJSON(text: response) // Make sure the response is JSON
-                    def token = jsonResponse.token // Adjust based on the actual structure of the response
-
-                    // Upload results
-                    def uploadResponse = sh(script: """
-                        curl -X POST -H "Content-Type: application/xml" \
+curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
                         --data @"./playwright-report/results.xml" \
                         "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${params.PROJECT_KEY}&testExecutionKey=${params.TEST_EXECUTION_KEY}"
                     """, returnStdout: true).trim()
-
-                    echo "API Response: ${uploadResponse}"
+                    echo "API Response: ${response}"
                 }
             }
         }
