@@ -9,6 +9,8 @@ pipeline {
     environment {
         CLIENT_ID = 'Mmar0YgnY3LFQD7I3AqlwEQ95xJ1i0Le0GVy49f1wcc='
         CLIENT_SECRET = 'dc6c48806069f4f8c2442076bdc806cc81170aa9aefa91a51eff979e5515b5d7'
+        // Assuming Node.js is installed in /usr/local/bin or similar
+        PATH = "/usr/local/bin:${env.PATH}" // Add Node.js to PATH
     }
 
     stages {
@@ -18,18 +20,18 @@ pipeline {
             }
         }
 
-stage('Run Tests') {
-    steps {
-        script {
-            echo "Running tests..."
-            dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
-                sh 'npm ci' // Install dependencies
-                sh 'npm test || true' // Run tests
+        stage('Run Tests') {
+            steps {
+                script {
+                    echo "Running tests..."
+                    dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
+                        sh 'npm ci' // Install dependencies
+                        sh 'npm test || true' // Run tests
+                    }
+                    echo "Tests completed."
+                }
             }
-            echo "Tests completed."
         }
-    }
-}
 
         stage('Authenticate and Upload Results') {
             steps {
