@@ -10,13 +10,25 @@ pipeline {
 
     }
 
-     stages {
-        stage('Build') {
+  stages {
+        stage('Trigger Remote Build') {
             steps {
-                echo "Build triggered with parameter: ${params.TRIGGER_PARAM}"
-            }
-        }
-    }
+                script {
+                    // Curl command to trigger remote build
+                    sh '''
+                        curl 'https://05e4-1-53-68-97.ngrok-free.app/job/Multi-branch/job/junit/buildWithParameters?PROJECT_KEY=AUT&TEST_EXECUTION_KEY=AUT-3879&delay=0sec' \
+                        -H 'sec-ch-ua-platform: "macOS"' \
+                        -H 'Authorization: Basic TmFuYToxMWY2MGYxYTkxOWU1Mzk2MTRjMDQ3OTEwYjJjYmQ5OWJm' \
+                        -H 'Referer: https://dev.agiletest.atlas.devsamurai.com/' \
+                        -H 'sec-ch-ua: "Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"' \
+                        -H 'sec-ch-ua-mobile: ?0' \
+                        -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36' \
+                        -H 'Accept: application/json, text/plain, */*' \
+                        -H 'Content-Type: application/json' \
+                        --data-raw '{}'
+                    '''
+                }
+            }}
 
     stages {
         stage('Checkout code') {
