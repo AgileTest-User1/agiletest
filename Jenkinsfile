@@ -27,6 +27,7 @@ pipeline {
                     dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
                         sh 'npm ci' // Install dependencies
                         sh 'npm test || true' // Run tests
+                        sh 'ls' // Run tests
                     }
                     echo "Tests completed."
                 }
