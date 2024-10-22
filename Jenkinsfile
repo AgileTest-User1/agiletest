@@ -10,6 +10,14 @@ pipeline {
 
     }
 
+     stages {
+        stage('Build') {
+            steps {
+                echo "Build triggered with parameter: ${params.TRIGGER_PARAM}"
+            }
+        }
+    }
+
     stages {
         stage('Checkout code') {
             steps {
@@ -18,13 +26,7 @@ pipeline {
             }
         }
 
-    stages {
-        stage('Build') {
-            steps {
-                echo "Build triggered with parameter: ${params.TRIGGER_PARAM}"
-            }
-        }
-    }
+
 
         stage('Run tests in Playwright Docker container') {
             steps {
