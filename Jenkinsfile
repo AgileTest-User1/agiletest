@@ -7,8 +7,8 @@ pipeline {
     }
 
     environment {
-        CLIENT_ID = credentials('Mmar0YgnY3LFQD7I3AqlwEQ95xJ1i0Le0GVy49f1wcc=') // Ensure Jenkins credentials are configured
-        CLIENT_SECRET = credentials('dc6c48806069f4f8c2442076bdc806cc81170aa9aefa91a51eff979e5515b5d7') // Ensure Jenkins credentials are configured
+        CLIENT_ID = 'Mmar0YgnY3LFQD7I3AqlwEQ95xJ1i0Le0GVy49f1wcc=' 
+        CLIENT_SECRET = 'dc6c48806069f4f8c2442076bdc806cc81170aa9aefa91a51eff979e5515b5d7' 
     }
 
     stages {
