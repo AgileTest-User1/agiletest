@@ -10,7 +10,7 @@ pipeline {
 
     }
 
-  stages {
+
         stage('Trigger Remote Build') {
             steps {
                 script {
@@ -30,7 +30,7 @@ pipeline {
                 }
             }
             }
-  }
+  
 
     stages {
         stage('Checkout code') {
