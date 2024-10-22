@@ -6,31 +6,11 @@ pipeline {
         string(name: 'TEST_EXECUTION_KEY', description: 'The key of test execution', defaultValue: '${TEST_EXECUTION_KEY}')
         string(name: 'CLIENT_ID', description: 'The key of project', defaultValue: 'Mmar0YgnY3LFQD7I3AqlwEQ95xJ1i0Le0GVy49f1wcc=')
         string(name: 'CLIENT_SECRET', description: 'The key of test execution', defaultValue: 'dc6c48806069f4f8c2442076bdc806cc81170aa9aefa91a51eff979e5515b5d7')
-        string(name: 'TRIGGER_PARAM', defaultValue: '11f60f1a919e539614c047910b2cbd99bf', description: 'Parameter for remote trigger')
 
     }
 
 
-        stage('Trigger Remote Build') {
-            steps {
-                script {
-                    // Curl command to trigger remote build
-                    sh '''
-                        curl 'https://05e4-1-53-68-97.ngrok-free.app/job/Multi-branch/job/junit/buildWithParameters?PROJECT_KEY=AUT&TEST_EXECUTION_KEY=AUT-3879&delay=0sec' \
-                        -H 'sec-ch-ua-platform: "macOS"' \
-                        -H 'Authorization: Basic TmFuYToxMWY2MGYxYTkxOWU1Mzk2MTRjMDQ3OTEwYjJjYmQ5OWJm' \
-                        -H 'Referer: https://dev.agiletest.atlas.devsamurai.com/' \
-                        -H 'sec-ch-ua: "Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"' \
-                        -H 'sec-ch-ua-mobile: ?0' \
-                        -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36' \
-                        -H 'Accept: application/json, text/plain, */*' \
-                        -H 'Content-Type: application/json' \
-                        --data-raw '{}'
-                    '''
-                }
-            }
-            }
-  
+ 
 
     stages {
         stage('Checkout code') {
