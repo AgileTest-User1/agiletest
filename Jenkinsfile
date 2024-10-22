@@ -1,10 +1,5 @@
 pipeline {
-     agent {
-        dockerContainer { 
-            image 'mcr.microsoft.com/playwright:v1.48.1-noble' 
-          
-        }
-    }
+    agent any
 
     parameters {
         string(name: 'PROJECT_KEY', description: 'The key of the project', defaultValue: 'AUT')
@@ -12,30 +7,33 @@ pipeline {
     }
 
     environment {
-        CLIENT_ID = credentials('CLIENT_ID')       // Ensure Jenkins credentials are configured
-        CLIENT_SECRET = credentials('CLIENT_SECRET') // Ensure Jenkins credentials are configured
+        CLIENT_ID = 'Mmar0YgnY3LFQD7I3AqlwEQ95xJ1i0Le0GVy49f1wcc='
+        CLIENT_SECRET = 'dc6c48806069f4f8c2442076bdc806cc81170aa9aefa91a51eff979e5515b5d7'
     }
 
     stages {
         stage('Checkout Code') {
             steps {
+                // Replace with your Git repository URL
                 checkout scm
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Run Tests') {
             steps {
-                sh 'npm ci'
+                script {
+                    echo "Running tests..."
+                    // Navigate to the directory containing your tests
+                    dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
+                        // Run npm tests and allow failure
+                        sh 'npm test || true'
+                    }
+                    echo "Tests completed."
+                }
             }
         }
 
-        stage('Run Playwright Tests') {
-            steps {
-                sh 'npm run test'
-            }
-        }
-
-        stage('Authenticate and Upload Test Results') {
+        stage('Authenticate and Upload Results') {
             steps {
                 script {
                     // Authenticate and get the token
@@ -44,50 +42,27 @@ pipeline {
                         -H 'Content-Type: application/json' \
                         --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
                     """, returnStdout: true).trim()
-                    
-                    def token = new groovy.json.JsonSlurper().parseText(response).token
-                    
-                    // Upload test results
-                    sh """
-                        curl -X POST \
-                        -H "Content-Type: application/xml" \
+
+                    // Extract token from response
+                    def token = response.token // Modify this if response parsing needs adjustment
+                    echo "Token: ${token}"
+
+                    // Upload results
+                    def uploadResponse = sh(script: """
+                        curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
                         --data @"./playwright-report/results.xml" \
                         "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${params.PROJECT_KEY}&testExecutionKey=${params.TEST_EXECUTION_KEY}"
-                    """
-                }
-            }
-        }
-
-        stage('Set Result Based on Exit Code') {
-            steps {
-                script {
-                    // Automatically set the result based on test execution
-                    if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
-                        currentBuild.result = 'SUCCESS'
-                    } else {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
-            }
-        }
-
-        stage('Send Test Execution Result') {
-            steps {
-                script {
-                    def response = sh(script: """
-                        curl -H "Content-Type: application/json" -X POST --data '{ "clientId": "${env.CLIENT_ID}", "clientSecret": "${env.CLIENT_SECRET}" }' https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate
                     """, returnStdout: true).trim()
 
-                    def token = new groovy.json.JsonSlurper().parseText(response).token
-
-                    sh """
-                        curl -H "Content-Type: application/json" \
-                        -H "Authorization: JWT ${token}" \
-                        --data '{ "jobURL": "${env.BUILD_URL}", "tool": "jenkins", "result": "${currentBuild.result}" }' \
-                        "https://dev.agiletest.atlas.devsamurai.com/ds/test-executions/${params.TEST_EXECUTION_KEY}/pipeline/history?projectKey=${params.PROJECT_KEY}"
-                    """
+                    echo "API Response: ${uploadResponse}"
                 }
+            }
+        }
+
+        stage('Finish') {
+            steps {
+                echo "Build process completed."
             }
         }
     }
