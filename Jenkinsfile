@@ -37,13 +37,12 @@ pipeline {
  stage('API Call') {
             steps {
                 script {
-                    def token = sh(script: '''
-                        curl 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}' | tr -d '"'
-                    ''', returnStdout: true).trim()
-                    echo "API Token: ${token}"
-
-                    echo "Project key: $PROJECT_KEY"
-                    echo "Test execution key: $TEST_EXECUTION_KEY"
+                    def response = sh(script: """
+                        curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
+                        -H 'Content-Type: application/json' \
+                        --data '{"clientId":"${env.CLIENT_ID}","clientSecret":"${env.CLIENT_SECRET}"}'
+                    """, returnStdout: true).trim()
+                    echo "Authentication Response: ${response}"
 
                     def response = sh(script: """
 curl -X POST -H "Content-Type: application/xml" \
