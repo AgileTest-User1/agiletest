@@ -29,11 +29,21 @@ pipeline {
                         sh 'npm test || true' // Run tests
                         sh 'ls' // Run tests
                         sh 'cd playwright-report & ls'
-                        sh 'cd results.xml'
+                        
                        
                     }
                     echo "Tests completed."
                 }
+
+
+                script {
+                        def fileExists = sh(script: 'test -f playwright-report/results.xml && echo "File exists"', returnStdout: true).trim()
+                        if (fileExists == "File exists") {
+                            echo "results.xml found."
+                        } else {
+                            error("results.xml file not found in playwright-report directory.")
+                        }
+                    }
             }
         }
 
