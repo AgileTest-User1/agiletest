@@ -30,12 +30,15 @@ stage('Run Tests') {
                 // Print the current working directory and its contents for debugging
                 sh 'pwd'
                 sh 'ls -la' // List all files for context
-sh 'npm test > test-output.log || true' // Capture output to a log file
-sh 'cat test-output.log' // Display the captured log
+                sh 'npm test' // Capture output to a log file
+
+                // sh 'npm test > test-output.log || true' // Capture output to a log file
+                // sh 'cat test-output.log' // Display the captured log
                 // Run tests and capture both output and exit status
                 // def testOutput = sh(script: 'npm run test', returnStatus: true, returnStdout: true)
                 // echo "Test Output: ${testOutput}" // Output of the test command
-
+                sh 'ls -la playwright-report'
+  
                 if (testOutput != 0) {
                     echo "Tests failed with exit code ${testOutput}. Please check the output for errors."
                     // Optionally add more detail if you have a specific log file or report
