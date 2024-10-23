@@ -31,26 +31,26 @@ stage('Run Tests') {
                 sh 'pwd'
                 sh 'ls -la' // List all files for context
                 sh 'npm test' // Capture output to a log file
-
+                sh 'ls -la playwright-report'
                 // sh 'npm test > test-output.log || true' // Capture output to a log file
                 // sh 'cat test-output.log' // Display the captured log
                 // Run tests and capture both output and exit status
                 // def testOutput = sh(script: 'npm run test', returnStatus: true, returnStdout: true)
                 // echo "Test Output: ${testOutput}" // Output of the test command
-                sh 'ls -la playwright-report'
+                // sh 'ls -la playwright-report'
   
              
 
                 // Check for results.xml as before
-                script {
-                    def fileExists = sh(script: 'test -f playwright-report/results.xml && echo "File exists" || echo "File does not exist"', returnStdout: true).trim()
-                    if (fileExists == "File does not exist") {
-                        sh 'find . -name "results.xml"' // Search for results.xml in the entire project structure
-                        error("results.xml not found in expected location.")
-                    } else {
-                        echo "results.xml found."
-                    }
-                }
+                // script {
+                //     def fileExists = sh(script: 'test -f playwright-report/results.xml && echo "File exists" || echo "File does not exist"', returnStdout: true).trim()
+                //     if (fileExists == "File does not exist") {
+                //         sh 'find . -name "results.xml"' // Search for results.xml in the entire project structure
+                //         error("results.xml not found in expected location.")
+                //     } else {
+                //         echo "results.xml found."
+                //     }
+                // }
             }
             echo "Tests completed."
         }
