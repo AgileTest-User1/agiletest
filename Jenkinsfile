@@ -38,7 +38,7 @@ stage('Run Tests') {
                 if (testOutput != 0) {
                     echo "Tests failed with exit code ${testOutput}. Please check the output for errors."
                     // Optionally add more detail if you have a specific log file or report
-                    sh 'cat ./path/to/your/test/output.log' // Adjust path as necessary
+                    sh 'cat ./Users/thuydung/Desktop/gitlab/agiletest2/playwright-report/output.log' // Adjust path as necessary
                     error("Stopping the pipeline due to test failure.")
                 }
 
