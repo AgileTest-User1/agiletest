@@ -20,25 +20,25 @@ pipeline {
             }
         }
 
-// stage('Run Tests') {
-//     steps {
-//         script {
-//             echo "Running tests..."
-//             dir('/Users/thuydung/Desktop/gitlab/agiletest2/playwright-report') {
-//                 // sh 'npm ci' // Install dependencies
-//                  sh 'ls' 
-//                 //  sh 'ls -la results.xml'// Install dependencies
-//                 // Print the current working directory and its contents for debugging
-//                 // sh 'pwd'
-//                 // sh 'ls -la' // List all files for context
-//                 // sh 'npm test' // Capture output to a log file
-//                 // sh 'ls -la playwright-report'
+stage('Run Tests') {
+    steps {
+        script {
+            echo "Running tests..."
+            dir('/Users/thuydung/Desktop/github/agiletest') {
+                sh 'npm ci' // Install dependencies
+                //  sh 'ls' 
+                // //  sh 'ls -la results.xml'// Install dependencies
+                // // Print the current working directory and its contents for debugging
+                // // sh 'pwd'
+                // // sh 'ls -la' // List all files for context
+                sh 'npm test' // Capture output to a log file
+                // // sh 'ls -la playwright-report'
 
-//             }
-//             echo "Tests completed."
-//         }
-//     }
-// }
+            }
+            echo "Tests completed."
+        }
+    }
+}
 
         stage('API Call') {
             steps {
