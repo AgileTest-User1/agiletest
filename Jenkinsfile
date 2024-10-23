@@ -24,7 +24,7 @@ stage('Run Tests') {
     steps {
         script {
             echo "Running tests..."
-            dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
+            dir('/Users/thuydung/Desktop/gitlab/agiletest2/playwright-report') {
                 // sh 'npm ci' // Install dependencies
                 //  sh 'ls -la playwright-report' 
                 //  sh 'ls -la results.xml'// Install dependencies
@@ -54,7 +54,7 @@ stage('Run Tests') {
                     def response = sh(script: """
                         curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
-                        --data @"./playwright-report/results.xml" \
+                        --data @"results.xml" \
                         "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${params.PROJECT_KEY}&testExecutionKey=${params.TEST_EXECUTION_KEY}"
                     """, returnStdout: true).trim()
                     echo "API Response: ${response}"
