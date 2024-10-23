@@ -19,8 +19,8 @@ pipeline {
                 checkout scm
             }
         }
-
- stage('Run Tests') {
+        
+stage('Run Tests') {
     steps {
         script {
             echo "Running tests..."
@@ -31,16 +31,18 @@ pipeline {
                 sh 'pwd'
                 sh 'ls -la' // List all files for context
 
-                // Run tests and capture output
+                // Run tests and capture both output and exit status
                 def testOutput = sh(script: 'npm test', returnStatus: true, returnStdout: true)
                 echo "Test Output: ${testOutput}" // Output of the test command
 
                 if (testOutput != 0) {
                     echo "Tests failed with exit code ${testOutput}. Please check the output for errors."
+                    // Optionally add more detail if you have a specific log file or report
+                    sh 'cat ./path/to/your/test/output.log' // Adjust path as necessary
                     error("Stopping the pipeline due to test failure.")
                 }
 
-                // Verify if results.xml exists
+                // Check for results.xml as before
                 script {
                     def fileExists = sh(script: 'test -f playwright-report/results.xml && echo "File exists" || echo "File does not exist"', returnStdout: true).trim()
                     if (fileExists == "File does not exist") {
