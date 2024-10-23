@@ -26,7 +26,7 @@ stage('Run Tests') {
             echo "Running tests..."
             dir('/Users/thuydung/Desktop/gitlab/agiletest2/playwright-report') {
                 // sh 'npm ci' // Install dependencies
-                //  sh 'ls -la playwright-report' 
+                 sh 'ls' 
                 //  sh 'ls -la results.xml'// Install dependencies
                 // Print the current working directory and its contents for debugging
                 // sh 'pwd'
