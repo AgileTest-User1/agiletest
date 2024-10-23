@@ -20,46 +20,41 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
+ stage('Run Tests') {
+    steps {
+        script {
+            echo "Running tests..."
+            dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
+                sh 'npm ci' // Install dependencies
+
+                // Print the current working directory and its contents for debugging
+                sh 'pwd'
+                sh 'ls -la' // List all files for context
+
+                // Run tests and capture output
+                def testOutput = sh(script: 'npm test', returnStatus: true, returnStdout: true)
+                echo "Test Output: ${testOutput}" // Output of the test command
+
+                if (testOutput != 0) {
+                    echo "Tests failed with exit code ${testOutput}. Please check the output for errors."
+                    error("Stopping the pipeline due to test failure.")
+                }
+
+                // Verify if results.xml exists
                 script {
-                    echo "Running tests..."
-                    dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
-                        // Print the current working directory
-                        sh 'pwd'
-                        
-                        sh 'npm ci' // Install dependencies
-                        
-                        // Run tests and capture output
-                        def testOutput = sh(script: 'npm test', returnStatus: true, returnStdout: true)
-                        echo "Test Output: ${testOutput}" // Output of the test command
-
-                        // Check the exit code to see if the tests succeeded
-                        if (testOutput != 0) {
-                            echo "Tests failed with exit code ${testOutput}. Please check the output for errors."
-                            error("Stopping the pipeline due to test failure.")
-                        }
-                        
-                        // List files in the 'playwright-report' directory to confirm its contents
-                        sh 'ls playwright-report || echo "playwright-report directory not found"'
+                    def fileExists = sh(script: 'test -f playwright-report/results.xml && echo "File exists" || echo "File does not exist"', returnStdout: true).trim()
+                    if (fileExists == "File does not exist") {
+                        sh 'find . -name "results.xml"' // Search for results.xml in the entire project structure
+                        error("results.xml not found in expected location.")
+                    } else {
+                        echo "results.xml found."
                     }
-
-                    // Check if 'results.xml' exists in the playwright-report directory
-                    script {
-                        def fileExists = sh(script: 'test -f playwright-report/results.xml && echo "File exists" || echo "File does not exist"', returnStdout: true).trim()
-                        if (fileExists == "File exists") {
-                            echo "results.xml found."
-                        } else {
-                            echo "results.xml file not found. Debugging directory structure..."
-                            sh 'find . -name "results.xml"' // Search for results.xml in the entire project structure
-                            error("results.xml not found in expected location.")
-                        }
-                    }
-                    
-                    echo "Tests completed."
                 }
             }
+            echo "Tests completed."
         }
+    }
+}
 
         stage('API Call') {
             steps {
