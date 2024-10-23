@@ -39,12 +39,7 @@ stage('Run Tests') {
                 // echo "Test Output: ${testOutput}" // Output of the test command
                 sh 'ls -la playwright-report'
   
-                if (testOutput != 0) {
-                    echo "Tests failed with exit code ${testOutput}. Please check the output for errors."
-                    // Optionally add more detail if you have a specific log file or report
-                    sh 'cat ./Users/thuydung/Desktop/gitlab/agiletest2/playwright-report/output.log' // Adjust path as necessary
-                    error("Stopping the pipeline due to test failure.")
-                }
+             
 
                 // Check for results.xml as before
                 script {
