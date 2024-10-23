@@ -27,8 +27,8 @@ pipeline {
                     dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
                         sh 'npm ci' // Install dependencies
                         sh 'npm test || true' // Run tests
-                        sh 'ls' // Run tests
-                        sh 'cd playwright-report & ls'
+                        sh 'ls playwright-report || echo "playwright-report directory not found"'
+
                         
                        
                     }
@@ -36,12 +36,14 @@ pipeline {
                 }
 
 
-                script {
-                        def fileExists = sh(script: 'test -f playwright-report/results.xml && echo "File exists"', returnStdout: true).trim()
+                    script {
+                        def fileExists = sh(script: 'test -f playwright-report/results.xml && echo "File exists" || echo "File does not exist"', returnStdout: true).trim()
                         if (fileExists == "File exists") {
                             echo "results.xml found."
                         } else {
-                            error("results.xml file not found in playwright-report directory.")
+                            echo "results.xml file not found. Debugging directory structure..."
+                            sh 'find . -name "results.xml"' // Search for results.xml in the entire project structure
+                            error("results.xml not found in expected location.")
                         }
                     }
             }
