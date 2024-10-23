@@ -29,6 +29,7 @@ pipeline {
                         sh 'npm test || true' // Run tests
                         sh 'ls' // Run tests
                         sh 'cd playwright-report & ls'
+                        sh 'cd results.xml'
                        
                     }
                     echo "Tests completed."
