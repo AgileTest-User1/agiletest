@@ -25,19 +25,26 @@ pipeline {
                 script {
                     echo "Running tests..."
                     dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
+                        // Print the current working directory
                         sh 'pwd'
-                        sh 'npm ci' // Install dependencies
-                        def testOutput = sh(script: 'npm test', returnStdout: true)
-                        echo "Test Output: ${testOutput}" // Output of the test command
-                        sh 'ls playwright-report || echo "playwright-report directory not found"'
-
                         
-                       
+                        sh 'npm ci' // Install dependencies
+                        
+                        // Run tests and capture output
+                        def testOutput = sh(script: 'npm test', returnStatus: true, returnStdout: true)
+                        echo "Test Output: ${testOutput}" // Output of the test command
+
+                        // Check the exit code to see if the tests succeeded
+                        if (testOutput != 0) {
+                            echo "Tests failed with exit code ${testOutput}. Please check the output for errors."
+                            error("Stopping the pipeline due to test failure.")
+                        }
+                        
+                        // List files in the 'playwright-report' directory to confirm its contents
+                        sh 'ls playwright-report || echo "playwright-report directory not found"'
                     }
-                    echo "Tests completed."
-                }
 
-
+                    // Check if 'results.xml' exists in the playwright-report directory
                     script {
                         def fileExists = sh(script: 'test -f playwright-report/results.xml && echo "File exists" || echo "File does not exist"', returnStdout: true).trim()
                         if (fileExists == "File exists") {
@@ -48,10 +55,13 @@ pipeline {
                             error("results.xml not found in expected location.")
                         }
                     }
+                    
+                    echo "Tests completed."
+                }
             }
         }
 
- stage('API Call') {
+        stage('API Call') {
             steps {
                 script {
                     def token = sh(script: '''
@@ -63,9 +73,9 @@ pipeline {
                     echo "Test execution key: $TEST_EXECUTION_KEY"
 
                     def response = sh(script: """
-curl -X POST -H "Content-Type: application/xml" \
+                        curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
-                        --data @results.xml \
+                        --data @playwright-report/results.xml \
                         "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${params.PROJECT_KEY}&testExecutionKey=${params.TEST_EXECUTION_KEY}"
                     """, returnStdout: true).trim()
                     echo "API Response: ${response}"
