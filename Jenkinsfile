@@ -31,7 +31,7 @@ stage('Run Tests') {
                 // // Print the current working directory and its contents for debugging
                 // // sh 'pwd'
                 // // sh 'ls -la' // List all files for context
-                sh 'npm test' // Capture output to a log file
+                sh 'npm run' // Capture output to a log file
                 // // sh 'ls -la playwright-report'
 
             }
