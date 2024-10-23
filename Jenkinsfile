@@ -53,7 +53,7 @@ stage('Run Tests') {
                     def response = sh(script: """
                         curl -X POST -H "Content-Type: application/xml" \
                         -H "Authorization: JWT ${token}" \
-                        --data @"./playwright-report/results.xml" \
+                        --data @results.xml" \
                         "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${params.PROJECT_KEY}&testExecutionKey=${params.TEST_EXECUTION_KEY}"
                     """, returnStdout: true).trim()
                     echo "API Response: ${response}"
