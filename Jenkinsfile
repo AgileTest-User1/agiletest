@@ -25,8 +25,10 @@ pipeline {
                 script {
                     echo "Running tests..."
                     dir('/Users/thuydung/Desktop/gitlab/agiletest2') {
+                        sh 'pwd'
                         sh 'npm ci' // Install dependencies
-                        sh 'npm test || true' // Run tests
+                        def testOutput = sh(script: 'npm test', returnStdout: true)
+                        echo "Test Output: ${testOutput}" // Output of the test command
                         sh 'ls playwright-report || echo "playwright-report directory not found"'
 
                         
