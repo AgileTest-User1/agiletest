@@ -66,6 +66,11 @@ jobs:
 
 
       - name: After Script
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          TEST_EXECUTION_KEY: ${{ secrets.TEST_EXECUTION_KEY }}
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
         run: |
           if [ "${{ job.status }}" == "success" ]; then
             RESULT="success"
