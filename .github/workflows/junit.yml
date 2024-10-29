@@ -77,7 +77,7 @@ jobs:
             -H "Authorization: JWT $token" \
             --data @"./playwright-report/results.xml" \
             "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}&testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}" 
-
+          echo $PROJECT_KEY
 
       - name: After Script
         env:
