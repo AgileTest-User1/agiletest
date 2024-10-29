@@ -43,25 +43,23 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    container:
-      image: mcr.microsoft.com/playwright:v1.42.1-jammy
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm run test
-
+      - name: Run test & generate report
+        run: |
+          yarn
+          yarn junit-test
+      - name: Upload report to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-report
+          path: reports/
       - name: Upload report to AgileTest.App
         env:
           AGILETEST_BASE_URL: ${{ secrets.AGILETEST_BASE_URL }}
@@ -77,7 +75,7 @@ jobs:
           -v ${{ github.workspace }}/reports:/reports \
           ghcr.io/agiletestapp/agiletest-cli:latest \
           test-execution import --framework-type junit --project-key TC \
-          /playwright-report/results.xml
+          /reports/junit-report.xml
 
       - name: After Script
         env:
