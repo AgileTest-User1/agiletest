@@ -57,26 +57,22 @@ jobs:
       - name: Run tests
         run: npm run test
 
-      - name: Authenticate and upload test results
+      - name: Upload report to AgileTest.App
         env:
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          # TEST_EXECUTION_KEY: ${{ secrets.TEST_EXECUTION_KEY }}
-          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+          AGILETEST_BASE_URL: ${{ secrets.AGILETEST_BASE_URL }}
+          AGILETEST_AUTH_BASE_URL: ${{ secrets.AGILETEST_AUTH_BASE_URL }}
+          AGILETEST_CLIENT_ID: ${{ secrets.AGILETEST_CLIENT_ID }}
+          AGILETEST_CLIENT_SECRET: ${{ secrets.AGILETEST_CLIENT_SECRET }}
         run: |
-          # Authenticate and get the token
-          export token=$(curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
-            -H 'Content-Type: application/json' \
-            --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
-
-          echo $token
-
-          # Upload the test results
-          curl -X POST \
-            -H "Content-Type: application/xml" \
-            -H "Authorization: JWT $token" \
-            --data @"./playwright-report/results.xml" \
-           "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}&testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}&milestoneId=${{ inputs.milestoneId }}&testEnvironments=${{ inputs.testEnvironments }}&testPlanKey=${{ inputs.testPlanKey }}&revision=${{ inputs.revision }}&fixVersions=${{ inputs.fixVersions }}"
+          docker run --rm \
+          -e AGILETEST_BASE_URL=$AGILETEST_BASE_URL \
+          -e AGILETEST_AUTH_BASE_URL=$AGILETEST_AUTH_BASE_URL \
+          -e AGILETEST_CLIENT_ID=$AGILETEST_CLIENT_ID \
+          -e AGILETEST_CLIENT_SECRET=$AGILETEST_CLIENT_SECRET \
+          -v ${{ github.workspace }}/reports:/reports \
+          ghcr.io/agiletestapp/agiletest-cli:latest \
+          test-execution import --framework-type junit --project-key TC \
+          /playwright-report/results.xml
 
       - name: After Script
         env:
