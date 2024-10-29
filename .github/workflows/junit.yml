@@ -25,6 +25,20 @@ on:
         description: The list name of test environments
         type: string
         required: false
+      testPlanKey: 
+        description: The list name of test environments
+        type: string
+        required: false
+      revision: 
+        description: The list name of test environments
+        type: string
+        required: false
+      fixVersions: 
+        description: The list name of test environments
+        type: string
+        required: false      
+      
+
 
 jobs:
   test:
@@ -62,7 +76,8 @@ jobs:
             -H "Content-Type: application/xml" \
             -H "Authorization: JWT $token" \
             --data @"./playwright-report/results.xml" \
-            "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}&testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}&milestoneId=${{ inputs.milestoneId }}&testEnvironments=${{ inputs.testEnvironments }}"
+            "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}&testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}&milestoneId=${{ inputs.milestoneId }}&testEnvironments=${{ inputs.testEnvironments }}&testPlanKey=${{ inputs.testPlanKey }}&revision=${{ inputs.revision }}&fixVersions=${{ inputs.fixVersions }}"
+
 
 
       - name: After Script
