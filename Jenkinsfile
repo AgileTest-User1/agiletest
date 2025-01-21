@@ -90,7 +90,7 @@ def submitTestResults(token) {
         curl -X POST -H "Content-Type: application/xml" \
         -H "Authorization: JWT ${token}" \
         --data @"./playwright-report/results.xml" \
-        "https://api.agiletest.app/ds/test-executions/junit?projectKey=${{ params.PROJECT_KEY }}&testExecutionKey=${{ params.TEST_EXECUTION_KEY }}&milestoneId=${{ params.milestoneId }}&testEnvironments=${{ params.testEnvironments }}&testPlanKeys=${{ params.testPlanKeys }}&revision=${{ params.revision }}&fixVersions=${{ params.fixVersions }}"
+        "https://api.agiletest.app/ds/test-executions/junit?projectKey=${params.PROJECT_KEY}&testExecutionKey=${params.TEST_EXECUTION_KEY}&milestoneId=${params.milestoneId}&testEnvironments=${params.testEnvironments}&testPlanKeys=${params.testPlanKeys}&revision=${params.revision}&fixVersions=${params.fixVersions}"
     """, returnStdout: true).trim()
 }
 
