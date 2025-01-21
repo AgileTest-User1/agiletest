@@ -7,8 +7,8 @@ pipeline {
     }
 
     environment {
-        CLIENT_ID = 'Mmar0YgnY3LFQD7I3AqlwEQ95xJ1i0Le0GVy49f1wcc='
-        CLIENT_SECRET = 'dc6c48806069f4f8c2442076bdc806cc81170aa9aefa91a51eff979e5515b5d7'
+        CLIENT_ID = 'ohuKO8VOiFh/OeeK+qyP6xz/l7z1nivhqrkAA9BvBnI71Lbv30ZrgYM5hf4a+6v+'
+        CLIENT_SECRET = 'af30354960b288f964a3405547ad0510981ef366b3e592972c4213ce8cda391e'
         PATH = "/usr/local/bin:${env.PATH}" // Add Node.js to PATH
     }
 
@@ -74,7 +74,7 @@ pipeline {
 
 def authenticateApi() {
     return sh(script: """
-        curl -s 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' \
+        curl -s 'https://agiletest.atlas.devsamurai.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' \
         --data '{"clientId":"'"$env.CLIENT_ID"'", "clientSecret":"'"$env.CLIENT_SECRET"'"}' \
         | tr -d '"'
     """, returnStdout: true).trim()
@@ -85,7 +85,7 @@ def submitTestResults(token) {
         curl -X POST -H "Content-Type: application/xml" \
         -H "Authorization: JWT ${token}" \
         --data @"./playwright-report/results.xml" \
-        "https://dev.api.agiletest.app/ds/test-executions/junit?projectKey=${params.PROJECT_KEY}&testExecutionKey=${params.TEST_EXECUTION_KEY}"
+        "https://api.agiletest.app/ds/test-executions/junit?projectKey=${{ params.PROJECT_KEY }}&testExecutionKey=${{ params.TEST_EXECUTION_KEY }}&milestoneId=${{ params.milestoneId }}&testEnvironments=${{ params.testEnvironments }}&testPlanKeys=${{ params.testPlanKeys }}&revision=${{ params.revision }}&fixVersions=${{ params.fixVersions }}"
     """, returnStdout: true).trim()
 }
 
@@ -93,7 +93,7 @@ def sendBuildStatus(token, status) {
     def response = sh(script: """
         curl -s -H "Content-Type:application/json" -H "Authorization:JWT $token" \
         --data '{ "buildURL": "'"$env.BUILD_URL"'", "tool":"jenkins-multibranch", "result":"${status}" }' \
-        "https://dev.agiletest.atlas.devsamurai.com/ds/test-executions/${params.TEST_EXECUTION_KEY}/pipeline/history?projectKey=${params.PROJECT_KEY}"
+        "https://agiletest.atlas.devsamurai.com/ds/test-executions/${params.TEST_EXECUTION_KEY}/pipeline/history?projectKey=${params.PROJECT_KEY}"
     """, returnStdout: true).trim()
 
     echo "API Response for ${status} build: ${response}"
