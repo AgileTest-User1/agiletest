@@ -6,9 +6,9 @@ pipeline {
         string(name: 'TEST_EXECUTION_KEY', description: 'Key of the test execution', defaultValue: 'T1-3879')
         string(name: 'testEnvironments', description: 'Key of the project', defaultValue: 'stg')
         string(name: 'milestoneId', description: 'Key of the test execution', defaultValue: '3214')
-        string(name: 'fixVersions', description: 'Key of the project', defaultValue: '1234')
+        string(name: 'fixVersions', description: 'Key of the project', defaultValue: 'version1')
         string(name: 'testPlanKeys', description: 'Key of the test execution', defaultValue: 'T1-68')
-        
+        string(name: 'revision', description: 'Key of the project', defaultValue: '0')        
     }
 
     environment {
