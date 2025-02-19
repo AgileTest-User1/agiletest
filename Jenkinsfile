@@ -2,18 +2,18 @@ pipeline {
     agent any // Use any available agent
 
     parameters {
-        string(name: 'PROJECT_KEY', description: 'Key of the project', defaultValue: 'T1')
-        string(name: 'TEST_EXECUTION_KEY', description: 'Key of the test execution', defaultValue: 'T1-3879')
-        string(name: 'testEnvironments', description: 'Key of the project', defaultValue: 'stg')
-        string(name: 'milestoneId', description: 'Key of the test execution', defaultValue: '3214')
-        string(name: 'fixVersions', description: 'Key of the project', defaultValue: 'version1')
-        string(name: 'testPlanKeys', description: 'Key of the test execution', defaultValue: 'T1-68')
+        string(name: 'PROJECT_KEY', description: 'Key of the project', defaultValue: 'PAID')
+        string(name: 'TEST_EXECUTION_KEY', description: 'Key of the test execution', defaultValue: 'PAID-21')
+        string(name: 'testEnvironments', description: 'Key of the project', defaultValue: 't1')
+        string(name: 'milestoneId', description: 'Key of the test execution', defaultValue: '3558')
+        string(name: 'fixVersions', description: 'Key of the project', defaultValue: 'T1')
+        string(name: 'testPlanKeys', description: 'Key of the test execution', defaultValue: 'PAID-11')
         string(name: 'revision', description: 'Key of the project', defaultValue: '0')        
     }
 
     environment {
         CLIENT_ID = 'ohuKO8VOiFh/OeeK+qyP6xz/l7z1nivhqrkAA9BvBnI71Lbv30ZrgYM5hf4a+6v+'
-        CLIENT_SECRET = 'af30354960b288f964a3405547ad0510981ef366b3e592972c4213ce8cda391e'
+        CLIENT_SECRET = '4e5c99e4b1ac3147d14126967b07a161c1f2756ec27920ea4a9969e95a10acf1'
         PATH = "/usr/local/bin:${env.PATH}" // Add Node.js to PATH
     }
 
