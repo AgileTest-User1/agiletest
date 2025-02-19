@@ -4,7 +4,7 @@ pipeline {
     parameters {
         string(name: 'PROJECT_KEY', description: 'Key of the project', defaultValue: 'PAID')
         string(name: 'TEST_EXECUTION_KEY', description: 'Key of the test execution', defaultValue: 'PAID-21')
-        string(name: 'testEnvironments', description: 'Key of the project', defaultValue: 't1')
+        string(name: 'testEnvironments', description: 'Key of the project', defaultValue: 'T1')
         string(name: 'milestoneId', description: 'Key of the test execution', defaultValue: '3558')
         string(name: 'fixVersions', description: 'Key of the project', defaultValue: 'T1')
         string(name: 'testPlanKeys', description: 'Key of the test execution', defaultValue: 'PAID-11')
