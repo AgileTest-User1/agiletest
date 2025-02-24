@@ -1,0 +1,93 @@
+name: Test Pipeline
+
+on:
+  push:
+    branches:
+      - junit
+  pull_request:
+    branches:
+      - junit
+  workflow_dispatch:
+    inputs:
+      PROJECT_KEY:
+        description: The key of project
+        type: string
+        required: true # require project key
+      TEST_EXECUTION_KEY:
+        description: The key of test execution
+        type: string
+        required: false # optional test execution key
+      milestoneId:
+        description: The id of milestone
+        type: string
+        required: false
+      testEnvironments:
+        description: The list name of test environments
+        type: string
+        required: false
+      testPlanKeys: 
+        description: The list name of test environments
+        type: string
+        required: false
+      revision: 
+        description: The list name of test environments
+        type: string
+        required: false
+      fixVersions: 
+        description: The list name of test environments
+        type: string
+        required: false      
+      
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Authenticate and upload test results
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          # TEST_EXECUTION_KEY: ${{ secrets.TEST_EXECUTION_KEY }}
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+        run: |
+          # Authenticate and get the token
+          export token=$(curl -X POST 'https://agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
+            -H 'Content-Type: application/json' \
+            --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
+          echo $token
+          # Upload the test results
+          curl -X POST \
+            -H "Content-Type: application/xml" \
+            -H "Authorization: JWT $token" \
+            --data @"./playwright-report/results.xml" \
+           "https://api.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}&testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}&milestoneId=${{ inputs.milestoneId }}&testEnvironments=${{ inputs.testEnvironments }}&testPlanKeys=${{ inputs.testPlanKeys }}&revision=${{ inputs.revision }}&fixVersions=${{ inputs.fixVersions }}"
+
+      - name: After Script
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          # TEST_EXECUTION_KEY: ${{ secrets.TEST_EXECUTION_KEY }}
+          PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            RESULT="success"
+          else
+            RESULT="failed"
+          fi
+          
+          echo $RESULT
+          echo "Owner/Repo: ${{ github.repository }}"
+          echo "Workflow Run ID: ${{ github.run_id }}"
+
+          export token=$(curl 'https://agiletest.atlas.devsamurai.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
+          echo $token
+          # Send the result data to the specified endpoint
+          curl -H "Content-Type:application/json" -H "Authorization:JWT $token" --data '{ "repository": "'"${{ github.repository }}"'", "runId": "'"${{ github.run_id }}"'", "tool":"github", "result":"'"$RESULT"'"  }' "https://agiletest.atlas.devsamurai.com/ds/test-executions/${{ inputs.TEST_EXECUTION_KEY }}/pipeline/history?projectKey=${{ inputs.PROJECT_KEY }}"

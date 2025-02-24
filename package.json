@@ -1,15 +1,16 @@
 {
-  "name": "agiletest",
+  "name": "automationtest",
   "version": "1.0.0",
   "description": "",
-  "main": "cucumber.config.js",
+  "main": "index.js",
   "scripts": {
-    "test": "cucumber-js features -f json:report/cucumber_report.json"
+    "test": "npx playwright test --project=chromium"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@cucumber/cucumber": "^11.0.0"
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.5"
   }
 }
