@@ -1,13 +1,13 @@
 import { test, expect } from "@playwright/test";
 
-test("has title", async ({ page }) => {
+test("Add TestIDs to sprints", async ({ page }) => {
   await page.goto("https://playwright.dev/");
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Playwright/);
 });
 
-test("get started section", async ({ page }) => {
+test("Connect to AgileTest after fail", async ({ page }) => {
   await page.goto("https://playwright.dev/");
 
   // Click the get started link.
@@ -19,7 +19,7 @@ test("get started section", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("empty username", async ({ page }) => {
+test("Reports for IDs in Dashboard", async ({ page }) => {
   await page.goto("https://playwright.dev/");
 
   // Click the get started link.

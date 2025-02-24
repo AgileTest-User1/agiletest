@@ -1,10 +1,10 @@
 <testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="2.4976960000023247">
 <testsuite name="example.spec.ts" timestamp="2024-10-23T08:17:50.732Z" hostname="chromium" tests="2" failures="0" skipped="0" time="3.143" errors="0">
-<testcase name="has title" classname="example.spec.ts" time="1.34">
+<testcase name="Add TestIDs to sprints" classname="example.spec.ts" time="1.34">
 </testcase>
-<testcase name="get started section" classname="example.spec.ts" time="1.803">
+<testcase name="Connect to AgileTest after fail" classname="example.spec.ts" time="1.803">
 </testcase>
-<testcase name="empty username" classname="example.spec.ts" time="1.803">
+<testcase name="Reports for IDs in Dashboard" classname="example.spec.ts" time="1.803">
 </testcase>
 </testsuite>
 </testsuites>
