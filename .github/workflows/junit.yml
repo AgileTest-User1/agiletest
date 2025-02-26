@@ -59,7 +59,7 @@ jobs:
           PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
         run: |
           # Authenticate and get the token
-          export token=$(curl -X POST 'https://agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
+          export token=$(curl -X POST 'https://agile-test-stg-dot-devsamurai-dev.ue.r.appspot.com/api/apikeys/authenticate' \
             -H 'Content-Type: application/json' \
             --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
           echo $token
@@ -68,7 +68,7 @@ jobs:
             -H "Content-Type: application/xml" \
             -H "Authorization: JWT $token" \
             --data @"./playwright-report/results.xml" \
-           "https://api.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}&testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}&milestoneId=${{ inputs.milestoneId }}&testEnvironments=${{ inputs.testEnvironments }}&testPlanKeys=${{ inputs.testPlanKeys }}&revision=${{ inputs.revision }}&fixVersions=${{ inputs.fixVersions }}"
+           "https://api.dev.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}&testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}&milestoneId=${{ inputs.milestoneId }}&testEnvironments=${{ inputs.testEnvironments }}&testPlanKeys=${{ inputs.testPlanKeys }}&revision=${{ inputs.revision }}&fixVersions=${{ inputs.fixVersions }}"
 
       - name: After Script
         env:
