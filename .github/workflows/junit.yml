@@ -69,7 +69,7 @@ jobs:
             -H "Authorization: JWT $token" \
             --data @"./playwright-report/results.xml" \
            "https://api.dev.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}&testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}&milestoneId=${{ inputs.milestoneId }}&testEnvironments=${{ inputs.testEnvironments }}&testPlanKeys=${{ inputs.testPlanKeys }}&revision=${{ inputs.revision }}&fixVersions=${{ inputs.fixVersions }}"
-#1
+
       - name: After Script
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
