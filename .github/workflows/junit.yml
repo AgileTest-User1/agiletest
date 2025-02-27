@@ -58,6 +58,8 @@ jobs:
           # TEST_EXECUTION_KEY: ${{ secrets.TEST_EXECUTION_KEY }}
           PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
         run: |
+          echo "CLIENT_ID: ${{ secrets.CLIENT_ID }}"
+          echo "CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}"
           # Authenticate and get the token
           export token=$(curl -X POST 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' \
             -H 'Content-Type: application/json' \
