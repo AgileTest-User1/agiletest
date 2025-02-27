@@ -90,4 +90,4 @@ jobs:
           export token=$(curl 'https://dev.agiletest.atlas.devsamurai.com/api/apikeys/authenticate' -X POST -H 'Content-Type:application/json' --data '{"clientId":"'"$CLIENT_ID"'","clientSecret":"'"$CLIENT_SECRET"'"}' | tr -d '"')
           echo $token
           # Send the result data to the specified endpoint
-          curl -H "Content-Type:application/json" -H "Authorization:JWT $token" --data '{ "repository": "'"${{ github.repository }}"'", "runId": "'"${{ github.run_id }}"'", "tool":"github", "result":"'"$RESULT"'"  }' "https://agiletest.atlas.devsamurai.com/ds/test-executions/${{ inputs.TEST_EXECUTION_KEY }}/pipeline/history?projectKey=${{ inputs.PROJECT_KEY }}"
+          curl -H "Content-Type:application/json" -H "Authorization:JWT $token" --data '{ "repository": "'"${{ github.repository }}"'", "runId": "'"${{ github.run_id }}"'", "tool":"github", "result":"'"$RESULT"'"  }' "https://dev.agiletest.atlas.devsamurai.com/ds/test-executions/${{ inputs.TEST_EXECUTION_KEY }}/pipeline/history?projectKey=${{ inputs.PROJECT_KEY }}"
