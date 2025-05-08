@@ -1,10 +1,52 @@
-<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="2.4976960000023247">
-<testsuite name="example.spec.ts" timestamp="2024-10-23T08:17:50.732Z" hostname="chromium" tests="2" failures="0" skipped="0" time="3.143" errors="0">
-<testcase name="Add TestIDs to sprints" classname="example.spec.ts" time="1.34">
+<testsuites id="" name="" tests="3" failures="3" skipped="0" errors="0" time="0.426625">
+<testsuite name="example.spec.ts" timestamp="2025-02-27T06:32:42.666Z" hostname="chromium" tests="3" failures="3" skipped="0" time="0.01" errors="0">
+<testcase name="Add TestIDs to sprints" classname="example.spec.ts" time="0.004">
+<failure message="example.spec.ts:3:5 Add TestIDs to sprints" type="FAILURE">
+<![CDATA[  [chromium] › example.spec.ts:3:5 › Add TestIDs to sprints ────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /Users/petertran/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
 </testcase>
-<testcase name="Connect to AgileTest after fail" classname="example.spec.ts" time="1.803">
+<testcase name="Connect to AgileTest after yes" classname="example.spec.ts" time="0.003">
+<failure message="example.spec.ts:10:5 Connect to AgileTest after yes" type="FAILURE">
+<![CDATA[  [chromium] › example.spec.ts:10:5 › Connect to AgileTest after yes ───────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /Users/petertran/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
 </testcase>
-<testcase name="Reports for IDs in Dashboard" classname="example.spec.ts" time="1.803">
+<testcase name="Reports for IDs in Dashboard" classname="example.spec.ts" time="0.003">
+<failure message="example.spec.ts:22:5 Reports for IDs in Dashboard" type="FAILURE">
+<![CDATA[  [chromium] › example.spec.ts:22:5 › Reports for IDs in Dashboard ─────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /Users/petertran/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
 </testcase>
 </testsuite>
 </testsuites>

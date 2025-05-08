@@ -7,7 +7,7 @@ test("Add TestIDs to sprints", async ({ page }) => {
   await expect(page).toHaveTitle(/Playwright/);
 });
 
-test("Connect to AgileTest after fail", async ({ page }) => {
+test("Connect to AgileTest after yes", async ({ page }) => {
   await page.goto("https://playwright.dev/");
 
   // Click the get started link.
