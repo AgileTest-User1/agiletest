@@ -70,10 +70,7 @@ jobs:
             -H "Content-Type: application/xml" \
             -H "Authorization: JWT $token" \
             --data @"./playwright-report/results.xml" \
-           "https://api.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}
-           &testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}&milestoneId=${{ inputs.milestoneId }}
-           &testEnvironments=${{ inputs.testEnvironments }}&testPlanKeys=${{ inputs.testPlanKeys }}
-           &revision=${{ inputs.revision }}&fixVersions=${{ inputs.fixVersions }}"
+           "https://api.agiletest.app/ds/test-executions/junit?projectKey=${{ inputs.PROJECT_KEY }}&testExecutionKey=${{ inputs.TEST_EXECUTION_KEY }}&milestoneId=${{ inputs.milestoneId }}&testEnvironments=${{ inputs.testEnvironments }}&testPlanKeys=${{ inputs.testPlanKeys }}&revision=${{ inputs.revision }}&fixVersions=${{ inputs.fixVersions }}"
 
       - name: After Script
         env:
